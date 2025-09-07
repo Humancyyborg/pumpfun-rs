@@ -1216,12 +1216,16 @@ impl PumpFun {
     }
 
     
+  
     pub fn get_fee_config_pda() -> Pubkey {
-        Pubkey::find_program_address(
-            &[b"fee-config"],
-            &constants::accounts::PUMPFUN,
-        ).0
-    }
+    let fee_program = constants::accounts::FEE_PROGRAM;
+    let seed_bytes = [1, 86, 224, 246, 147, 102, 90, 207, 68, 219, 21, 104, 191, 23, 91, 170, 81, 137, 203, 151, 245, 210, 255, 59, 101, 93, 43, 182, 253, 109, 24, 176];
+    
+    Pubkey::find_program_address(
+        &[b"fee_config", &seed_bytes],
+        &fee_program,
+    ).0
+}
 
 
 }
