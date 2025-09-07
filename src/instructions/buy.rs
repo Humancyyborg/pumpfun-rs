@@ -57,17 +57,16 @@ pub fn buy(
 ) -> Instruction {
     let bonding_curve: Pubkey = PumpFun::get_bonding_curve_pda(mint).unwrap();
     let creator_vault: Pubkey = PumpFun::get_creator_vault_pda(creator).unwrap();
-    let fee_config: Pubkey = PumpFun::get_fee_config_pda().unwrap();
-    let fee_program: Pubkey = constants::accounts::FEE_PROGRAM; // You'll need to add this constant
+    let fee_config: Pubkey = PumpFun::get_fee_config_pda();
+    let fee_program: Pubkey = constants::accounts::FEE_PROGRAM;
     
     Instruction::new_with_bytes(
         constants::accounts::PUMPFUN,
         &args.data(),
         vec![
-            // Exact order from IDL:
             AccountMeta::new_readonly(PumpFun::get_global_pda(), false),           // global
             AccountMeta::new(*fee_recipient, false),                               // fee_recipient
-            AccountMeta::new_readonly(*mint, false),                               // mint (READONLY - changed back)
+            AccountMeta::new_readonly(*mint, false),                               // mint (READONLY)
             AccountMeta::new(bonding_curve, false),                                // bonding_curve
             AccountMeta::new(get_associated_token_address(&bonding_curve, mint), false), // associated_bonding_curve
             AccountMeta::new(get_associated_token_address(&payer.pubkey(), mint), false), // associated_user
@@ -79,8 +78,8 @@ pub fn buy(
             AccountMeta::new_readonly(constants::accounts::PUMPFUN, false),        // program
             AccountMeta::new(constants::accounts::GLOBAL_VOLUME_ACCUMULATOR, false), // global_volume_accumulator
             AccountMeta::new(PumpFun::get_user_volume_accumulator_pda(&payer.pubkey()), false), // user_volume_accumulator
-            AccountMeta::new_readonly(fee_config, false),                          // fee_config (NEW)
-            AccountMeta::new_readonly(fee_program, false),                         // fee_program (NEW)
+            AccountMeta::new_readonly(fee_config, false),                          // fee_config
+            AccountMeta::new_readonly(fee_program, false),                         // fee_program
         ],
     )
 }
