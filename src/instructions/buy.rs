@@ -62,9 +62,9 @@ pub fn buy(
         &args.data(),
         vec![
             AccountMeta::new_readonly(PumpFun::get_global_pda(), false),
-            AccountMeta::new_readonly(PumpFun::get_fee_config_pda(), false), // 👈 NEW account
+            AccountMeta::new_readonly(PumpFun::get_fee_config_pda(), false),
             AccountMeta::new(*fee_recipient, false),
-            AccountMeta::new_readonly(*mint, false),
+            AccountMeta::new(*mint, false), // 👈 CHANGED FROM new_readonly to new
             AccountMeta::new(bonding_curve, false),
             AccountMeta::new(get_associated_token_address(&bonding_curve, mint), false),
             AccountMeta::new(get_associated_token_address(&payer.pubkey(), mint), false),
