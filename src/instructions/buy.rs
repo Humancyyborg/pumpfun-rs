@@ -48,36 +48,6 @@ impl Buy {
 /// the bonding curve formula. A portion of the SOL is taken as a fee and sent to the
 /// fee recipient account. The price increases as more tokens are purchased according to
 /// the bonding curve function.
-///
-/// # Arguments
-///
-/// * `payer` - Keypair that will provide the SOL to buy tokens
-/// * `mint` - Public key of the token mint to buy
-/// * `fee_recipient` - Public key of the account that will receive the transaction fee
-/// * `creator` - Public key of the token's creator
-/// * `args` - Buy instruction data containing the token amount and maximum acceptable SOL price
-///
-/// # Returns
-///
-/// Returns a Solana instruction that when executed will buy tokens from the bonding curve
-///
-/// # Account Requirements
-///
-/// The instruction requires the following accounts in this order:
-/// 1. Global configuration PDA (readonly)
-/// 2. Fee recipient account (writable)
-/// 3. Token mint account (readonly)
-/// 4. Bonding curve PDA (writable)
-/// 5. Bonding curve token account (writable)
-/// 6. Buyer's token account (writable)
-/// 7. Payer account (signer, writable)
-/// 8. System program (readonly)
-/// 9. Token program (readonly)
-/// 10. Creator vault (writable)
-/// 11. Event authority (readonly)
-/// 12. Pump.fun program ID (readonly)
-/// 13. Global volume accumulator (writable)
-/// 14. User volume accumulator (writable)
 pub fn buy(
     payer: &Keypair,
     mint: &Pubkey,
@@ -92,6 +62,7 @@ pub fn buy(
         &args.data(),
         vec![
             AccountMeta::new_readonly(PumpFun::get_global_pda(), false),
+            AccountMeta::new_readonly(PumpFun::get_fee_config_pda(), false), // 👈 NEW account
             AccountMeta::new(*fee_recipient, false),
             AccountMeta::new_readonly(*mint, false),
             AccountMeta::new(bonding_curve, false),
