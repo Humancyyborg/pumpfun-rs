@@ -108,10 +108,9 @@ pub fn sell(
             AccountMeta::new_readonly(constants::accounts::TOKEN_PROGRAM, false),   // token_program
             AccountMeta::new_readonly(constants::accounts::EVENT_AUTHORITY, false), // event_authority
             AccountMeta::new_readonly(constants::accounts::PUMPFUN, false),        // program
-            AccountMeta::new(constants::accounts::GLOBAL_VOLUME_ACCUMULATOR, false), // global_volume_accumulator
-            AccountMeta::new(PumpFun::get_user_volume_accumulator_pda(&payer.pubkey()), false), // user_volume_accumulator
-            AccountMeta::new_readonly(fee_config, false),                          // fee_config (NEW)
-            AccountMeta::new_readonly(fee_program, false),                         // fee_program (NEW)
+            AccountMeta::new_readonly(fee_config, false),                          // fee_config (DIFFERENT POSITION!)
+            AccountMeta::new_readonly(fee_program, false),                         // fee_program (DIFFERENT POSITION!)
+            // Note: global_volume_accumulator and user_volume_accumulator are NOT in sell instruction!
         ],
     )
 }
