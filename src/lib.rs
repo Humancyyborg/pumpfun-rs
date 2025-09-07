@@ -1214,4 +1214,14 @@ impl PumpFun {
         );
         user_volume_accumulator
     }
+
+    
+    pub fn get_fee_config_pda() -> Pubkey {
+        Pubkey::find_program_address(
+            &[b"fee-config"],
+            &constants::accounts::PUMPFUN,
+        ).0
+    }
+
+
 }
