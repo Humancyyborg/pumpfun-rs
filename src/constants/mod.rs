@@ -56,4 +56,5 @@ pub mod accounts {
 
     /// Rent Sysvar ID
     pub const RENT: Pubkey = pubkey!("SysvarRent111111111111111111111111111111111");
+    pub const FEE_PROGRAM: Pubkey = pubkey!("pfeeUxB6jkeY1Hxd7CsFCAjcbHA9rWtchMGdZ6VojVZ");
 }
