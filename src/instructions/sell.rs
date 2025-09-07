@@ -78,6 +78,8 @@ impl Sell {
 /// 12. Pump.fun program ID (readonly)
 /// 13. Global volume accumulator (writable)
 /// 14. User volume accumulator (writable)
+/// 15. Fee config PDA (readonly) - NEW
+/// 16. Fee program (readonly) - NEW
 pub fn sell(
     payer: &Keypair,
     mint: &Pubkey,
@@ -87,27 +89,29 @@ pub fn sell(
 ) -> Instruction {
     let bonding_curve: Pubkey = PumpFun::get_bonding_curve_pda(mint).unwrap();
     let creator_vault: Pubkey = PumpFun::get_creator_vault_pda(creator).unwrap();
+    let fee_config: Pubkey = PumpFun::get_fee_config_pda();
+    let fee_program: Pubkey = constants::accounts::FEE_PROGRAM;
+    
     Instruction::new_with_bytes(
         constants::accounts::PUMPFUN,
         &args.data(),
         vec![
-            AccountMeta::new_readonly(PumpFun::get_global_pda(), false),
-            AccountMeta::new(*fee_recipient, false),
-            AccountMeta::new_readonly(*mint, false),
-            AccountMeta::new(bonding_curve, false),
-            AccountMeta::new(get_associated_token_address(&bonding_curve, mint), false),
-            AccountMeta::new(get_associated_token_address(&payer.pubkey(), mint), false),
-            AccountMeta::new(payer.pubkey(), true),
-            AccountMeta::new_readonly(constants::accounts::SYSTEM_PROGRAM, false),
-            AccountMeta::new(creator_vault, false),
-            AccountMeta::new_readonly(constants::accounts::TOKEN_PROGRAM, false),
-            AccountMeta::new_readonly(constants::accounts::EVENT_AUTHORITY, false),
-            AccountMeta::new_readonly(constants::accounts::PUMPFUN, false),
-            AccountMeta::new(constants::accounts::GLOBAL_VOLUME_ACCUMULATOR, false),
-            AccountMeta::new(
-                PumpFun::get_user_volume_accumulator_pda(&payer.pubkey()),
-                false,
-            ),
+            AccountMeta::new_readonly(PumpFun::get_global_pda(), false),           // global
+            AccountMeta::new(*fee_recipient, false),                               // fee_recipient
+            AccountMeta::new_readonly(*mint, false),                               // mint
+            AccountMeta::new(bonding_curve, false),                                // bonding_curve
+            AccountMeta::new(get_associated_token_address(&bonding_curve, mint), false), // associated_bonding_curve
+            AccountMeta::new(get_associated_token_address(&payer.pubkey(), mint), false), // associated_user
+            AccountMeta::new(payer.pubkey(), true),                                // user
+            AccountMeta::new_readonly(constants::accounts::SYSTEM_PROGRAM, false),  // system_program
+            AccountMeta::new(creator_vault, false),                                // creator_vault
+            AccountMeta::new_readonly(constants::accounts::TOKEN_PROGRAM, false),   // token_program
+            AccountMeta::new_readonly(constants::accounts::EVENT_AUTHORITY, false), // event_authority
+            AccountMeta::new_readonly(constants::accounts::PUMPFUN, false),        // program
+            AccountMeta::new(constants::accounts::GLOBAL_VOLUME_ACCUMULATOR, false), // global_volume_accumulator
+            AccountMeta::new(PumpFun::get_user_volume_accumulator_pda(&payer.pubkey()), false), // user_volume_accumulator
+            AccountMeta::new_readonly(fee_config, false),                          // fee_config (NEW)
+            AccountMeta::new_readonly(fee_program, false),                         // fee_program (NEW)
         ],
     )
 }
